@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Search App</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic styles for the body and container */
+        body {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: flex-start; /* Align items to the top */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove default margin */
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            margin: 20px; /* Adjust margin to move content higher */
+            max-width: 600px; /* Limit the width of the container */
+            width: 100%; /* Full width for smaller screens */
+        }
+
+        .nav-button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown {
+            display: inline-block;
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute; /* Position it absolutely */
+            left: 0; /* Align to the left of the dropdown button */
+            top: 100%; /* Position it below the button */
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content .subject-button {
+            background-color: #f9f9f9;
+            color: black;
+            border: none;
+            text-align: left;
+            padding: 12px 16px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+        }
+
+        .dropdown-content .subject-button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .image-placeholder img {
+            display: block;
+            max-width: 100%;
+            max-height: 300px;
+            margin: 0 auto;
+        }
+
+        /* Style for the search bar */
+        #searchBar {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Style for the experiment list */
+        #experimentList {
+            list-style-type: none;
+            padding: 0;
+            display: none; /* Initially hidden */
+            text-align: left; /* Left align the text */
+        }
+
+        #experimentList li {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        #experimentList li:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Style for links */
+        a {
+            color: black; /* Change hyperlink color to black */
+            text-decoration: none; /* Remove underline */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Optional: Add underline on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-placeholder">
+            <img id="experimentImage" src="solveX2.png" alt="Experiment Image">
+        </div>
+
+        <div class="button-container">
+            <button id="homeButton" class="nav-button" onclick="goHome()">Home</button>
+            <div class="dropdown">
+                <button id="menuButton" class="nav-button" onclick="toggleExperiments()">Menu</button>
+                <div class="dropdown-content">
+                    <button class="subject-button" onclick="toggleExperiments()">Fluid Mechanics</button>
+                    <div class="experiment-dropdown" id="experimentDropdown" style="display: none;">
+                        <ul>
+                            <li onclick="selectExperiment('fm_exp1.html')">FM EXP 1: To Find the Coefficient of Discharge of V-Notch & Rectangular Notch</li>
+                            <li onclick="selectExperiment('fm_exp2.html')">FM EXP 2: To Verify Bernoulli's Theorem</li>
+                            <li onclick="selectExperiment('fm_exp3.html')">FM EXP 3: To Determine Coefficient of Discharge of Venturimeter</li>
+                            <li onclick="selectExperiment('fm_exp4.html')">FM EXP 4: To Determine Coefficient of Discharge of Orificemeter</li>
+                            <li onclick="selectExperiment('fm_exp5.html')">FM EXP 5: To Determine Metacentric Height of a Ship Model</li>
+                        </ul>
+                    </div>
+                    <button class="subject-button" onclick="subjectSelected('Thermodynamics')">Thermodynamics</button>
+                    <button class="subject-button" onclick="subjectSelected('Dynamics of Machine')">Dynamics of Machine</button>
+                </div>
+            </div>
+            <button id="contactButton" class="nav-button" onclick="showContact()">Contact Us</button>
+        </div>
+
+        <input type="text" id="searchBar" placeholder="Search for experiments..." onkeyup="searchExperiments()">
+        
+        <ul id="experimentList"> <!-- Initially hidden -->
+            <li onclick="selectExperiment('fm_exp1.html')">FM EXP 1: To Find the Coefficient of Discharge of V-Notch & Rectangular Notch</li>
+            <li onclick="selectExperiment('fm_exp2.html')">FM EXP 2: To Verify Bernoulli's Theorem</li>
+            <li onclick="selectExperiment('fm_exp3.html')">FM EXP 3: To Determine Coefficient of Discharge of Venturimeter</li>
+            <li onclick="selectExperiment('fm_exp4.html')">FM EXP 4: To Determine Coefficient of Discharge of Orificemeter</li>
+            <li onclick="selectExperiment('fm_exp5.html')">FM EXP 5: To Determine Metacentric Height of a Ship Model</li>
+        </ul>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = 'index.html'; // Change this to your home page URL
+        }
+
+        function toggleExperiments() {
+            const dropdown = document.getElementById('experimentDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function subjectSelected(subject) {
+            alert('You selected: ' + subject);
+        }
+
+        function showContact() {
+            alert('Contact us at: contact@example.com');
+        }
+
+        function searchExperiments() {
+            const input = document.getElementById('searchBar').value.toLowerCase();
+            const list = document.getElementById('experimentList');
+            const items = list.getElementsByTagName('li');
+
+            let hasResults = false;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.textContent.toLowerCase().includes(input)) {
+                    item.style.display = ''; // Show matching item
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none'; // Hide non-matching item
+                }
+            }
+
+            // Show the list only if there are results, otherwise hide it
+            list.style.display = hasResults ? 'block' : 'none'; 
+
+            // If the search bar is empty, hide all items
+            if (input === '') {
+                for (let i = 0; i < items.length; i++) {
+                    items[i].style.display = 'none'; // Hide all items
+                }
+                list.style.display = 'none'; // Hide the list
+            }
+        }
+
+        function selectExperiment(experimentPage) {
+            window.location.href = experimentPage; // Navigate to the selected experiment page
+        }
+    </script>
+</body>
+</html>

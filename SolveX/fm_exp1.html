@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FM EXP 1: Coefficient of Discharge of V-Notch & Rectangular Notch</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <button class="nav-button" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+        <button class="nav-button" onclick="setRectangularNotch()">Rectangular Notch</button>
+        <button class="nav-button" onclick="setVNotch()">V-Notch</button>
+        <h1>FM EXP 1: Coefficient of Discharge of Notch</h1>
+        <form id="experimentForm">
+            <label for="initialHeight">Initial Height of Water (h1) in meters:</label>
+            <input type="number" id="initialHeight" required>
+
+            <label for="finalHeight">Final Height of Water (h2) in meters:</label>
+            <input type="number" id="finalHeight" required>
+
+            <label id="notchLabel" for="width">Width of the Notch (b) in meters:</label>
+            <input type="number" id="width" required>
+
+            <label id="thetaLabel" for="theta" style="display: none;">Half Angle of V-Notch (θ) in degrees:</label>
+            <input type="number" id="theta" style="display: none;>
+
+            <label for="tankWidth">Width of the Tank (W) in meters:</label>
+            <input type="number" id="tankWidth" required>
+
+            <label for="tankLength">Length of the Tank (L) in meters:</label>
+            <input type="number" id="tankLength" required>
+
+            <label for="initialRise">Initial Rise of Water (R1) in meters:</label>
+            <input type="number" id="initialRise" required>
+
+            <label for="finalRise">Final Rise of Water (R2) in meters:</label>
+            <input type="number" id="finalRise" required>
+
+            <label for="time">Time of Discharge (t) in seconds:</label>
+            <input type="number" id="time" required>
+
+            <button type="button" onclick="calculate()">Calculate</button>
+            <button type="button" onclick="refreshForm()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </form>
+
+        <h2>Results:</h2>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = 'index.html'; // Change this to your home page URL
+        }
+
+        function setRectangularNotch() {
+            document.getElementById('notchLabel').innerText = 'Width of the Notch (b) in meters:';
+            document.getElementById('width').style.display = 'inline';
+            document.getElementById('thetaLabel').style.display = 'none';
+            document.getElementById('theta').style.display = 'none';
+        }
+
+        function setVNotch() {
+            document.getElementById('notchLabel').innerText = 'Half Angle of V-Notch (θ) in degrees:';
+            document.getElementById('width').style.display = 'none';
+            document.getElementById('thetaLabel').style.display = 'inline';
+            document.getElementById('theta').style.display = 'inline';
+        }
+
+        function refreshForm() {
+            document.getElementById('experimentForm').reset(); // Reset the form fields
+            document.getElementById('result').innerHTML = ''; // Clear the results
+            setRectangularNotch(); // Reset to rectangular notch by default
+        }
+
+        function calculate() {
+            const initialHeight = parseFloat(document.getElementById('initialHeight').value);
+            const finalHeight = parseFloat(document.getElementById('finalHeight').value);
+            const tankWidth = parseFloat(document.getElementById('tankWidth').value);
+            const tankLength = parseFloat(document.getElementById('tankLength').value);
+            const initialRise = parseFloat(document.getElementById('initialRise').value);
+            const finalRise = parseFloat(document.getElementById('finalRise').value);
+            const time = parseFloat(document.getElementById('time').value);
+
+            // Calculate height of water (h)
+            const heightOfWater = finalHeight - initialHeight;
+
+            // Calculate rise in water (R)
+            const rise = finalRise - initialRise;
+
+            // Calculate volume of discharge water (V)
+            const volumeDischarge = tankWidth * tankLength * rise; // V = W * L * R
+
+            // Calculate actual discharge (Q_actual)
+            const actualDischarge = volumeDischarge / time; // Q_actual = V / t
+
+            let theoreticalDischarge;
+            const g = 9.81; // Acceleration due to gravity in m/s²
+
+            if (document.getElementById('width').style.display !== 'none') {
+                // Rectangular Notch
+                const width = parseFloat(document.getElementById('width').value);
+                theoreticalDischarge = (2 / 3) * Math.sqrt(2 * g) * width * Math.pow(heightOfWater, 1.5); // Q_theoretical
+            } else {
+                // V-Notch
+                const theta = parseFloat(document.getElementById('theta').value);
+                const thetaRadians = theta * (Math.PI / 180); // Convert degrees to radians
+                theoreticalDischarge = (8 / 15) * Math.sqrt(2 * g) * Math.tan(thetaRadians) * Math.pow(heightOfWater, 2.5); // Q_theoretical
+            }
+
+            // Calculate coefficient of discharge (Cd)
+            const coefficientOfDischarge = actualDischarge / theoreticalDischarge;
+
+            // Display results with 5 decimal places
+            document.getElementById('result').innerHTML = `
+                Height of Water (h): ${heightOfWater.toFixed(5)} m<br>
+                Rise in Water (R): ${rise.toFixed(5)} m<br>
+                Volume of Discharge Water (V): ${volumeDischarge.toFixed(5)} m³<br>
+                Actual Discharge (Q_actual): ${actualDischarge.toFixed(5)} m³/s<br>
+                Theoretical Discharge (Q_theoretical): ${theoreticalDischarge.toFixed(5)} m³/s<br>
+                Coefficient of Discharge (Cd): ${coefficientOfDischarge.toFixed(5)}
+            `;
+        }
+
+        // Initialize the form to rectangular notch by default
+        window.onload = function() {
+            setRectangularNotch();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 5: Metacentric Height of a Ship Model</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .nav-button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="nav-button" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+        <button class="nav-button" onclick="refreshForm()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        
+        <h1>Experiment 5: Metacentric Height of a Ship Model</h1>
+        
+        <form id="experimentForm">
+            <label for="Wm">Weight of Unbalanced Mass (W<sub>m</sub>) in Newton:</label>
+            <input type="number" id="Wm" step="any" required>
+
+            <label for="d">Distance of Unbalanced Mass from Center of Crossbar (d) in meters:</label>
+            <input type="number" id="d" step="any" required>
+
+            <label for="theta">Angle of Heel or Tilt (θ) in degrees:</label>
+            <input type="number" id="theta" step="any" required>
+
+            <label for="rho">Density of Fluid (ρ) in kg/m³:</label>
+            <input type="number" id="rho" step="any" required>
+
+            <label for="width">Width of the Water Tank (W) in meters:</label>
+            <input type="number" id="width" step="any" required>
+
+            <label for="length">Length of the Water Tank (L) in meters:</label>
+            <input type="number" id="length" step="any" required>
+
+            <label for="finalRise">Final Rise in Tank (h<sub>2</sub>) in meters:</label>
+            <input type="number" id="finalRise" step="any" required>
+
+            <label for="initialRise">Initial Rise in Tank (h<sub>1</sub>) in meters:</label>
+            <input type="number" id="initialRise" step="any" required>
+
+            <label for="g">Acceleration due to Gravity (g) in m/s²:</label>
+            <input type="number" id="g" step="any" value="9.81" required>
+
+            <button type="button" onclick="calculateMetacentricHeight()">Calculate Metacentric Height (GM)</button>
+        </form>
+
+        <h2>Results:</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>Weight of the Pontoon (W<sub>c</sub>) in Newton</th>
+                    <th>Metacentric Height (GM) in meters</th>
+                </tr>
+            </thead>
+            <tbody id="resultBody">
+                <!-- Results will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = 'index.html'; // Change this to your home page URL
+        }
+
+        function refreshForm() {
+            document.getElementById('experimentForm').reset(); // Reset the form fields
+            document.getElementById('resultBody').innerHTML = ''; // Clear the results
+        }
+
+        function calculateMetacentricHeight() {
+            const Wm = parseFloat(document.getElementById('Wm').value); // Weight of unbalanced mass
+            const d = parseFloat(document.getElementById('d').value); // Distance of unbalanced mass
+            const theta = parseFloat(document.getElementById('theta').value); // Angle of heel
+            const rho = parseFloat(document.getElementById('rho').value); // Density of fluid
+            const width = parseFloat(document.getElementById('width').value); // Width of the tank
+            const length = parseFloat(document.getElementById('length').value); // Length of the tank
+            const finalRise = parseFloat(document.getElementById('finalRise').value); // Final rise
+            const initialRise = parseFloat(document.getElementById('initialRise').value); // Initial rise
+            const g = parseFloat(document.getElementById('g').value); // Acceleration due to gravity
+
+            // Calculate the rise in the water tank
+            const R = finalRise - initialRise; // Rise in the water tank
+
+            // Calculate the weight of the pontoon (Wc)
+            const Wc = rho * g * width * length * R; // Wc = ρ * g * W * L * R
+
+            // Calculate the metacentric height (GM)
+            const GM = (Wm * d) / ((Wc + Wm) * Math.tan(theta * (Math.PI / 180))); // Convert theta to radians
+
+            // Clear previous results
+            const resultBody = document.getElementById('resultBody');
+            resultBody.innerHTML = '';
+
+            // Create a new row for the results table
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${Wc.toFixed(5)}</td>
+                <td>${GM.toFixed(5)}</td>
+            `;
+            resultBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>

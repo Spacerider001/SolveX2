@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Experiment Search App</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-button {
+            padding: 10px 20px;
+            background-color: #007bff; /* Blue background */
+            color: white;
+            border: none;
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer;
+            margin: 5px 0; /* Space between buttons */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+            font-size: 16px; /* Font size */
+            width: 100%; /* Full width */
+        }
+
+        .subject-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly enlarge the button */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Subjects</h1>
+        <button class="subject-button" onclick="subjectSelected('Fluid Mechanics')">Fluid Mechanics</button>
+        <button class="subject-button" onclick="subjectSelected('Thermodynamics')">Thermodynamics</button>
+        <button class="subject-button" onclick="subjectSelected('Optics')">Optics</button>
+        <button class="subject-button" onclick="subjectSelected('Electricity and Magnetism')">Electricity and Magnetism</button>
+        <button class="subject-button" onclick="subjectSelected('Waves and Sound')">Waves and Sound</button>
+        <button onclick="goHome()">Back to Home</button>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = 'index.html'; // Redirect to the home page
+        }
+
+        function subjectSelected(subject) {
+            alert("You selected: " + subject);
+            // You can add more functionality here, such as navigating to a subject-specific page or displaying more information.
+        }
+    </script>
+</body>
+</html>

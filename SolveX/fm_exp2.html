@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FM EXP 2: Verify Bernoulli's Theorem</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="nav-button" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+        <button class="nav-button" onclick="refreshForm()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        
+        <h1>FM EXP 2: Verify Bernoulli's Theorem</h1>
+        
+        <form id="experimentForm">
+            <label for="numAreas">Number of Areas of Cross-Section:</label>
+            <input type="number" id="numAreas" min="1" required>
+            <button type="button" onclick="generateAreaInputs()">Generate Inputs</button>
+
+            <div id="areaInputs"></div>
+
+            <label for="exponent">Enter Exponent (x) for Area Scaling (10^x):</label>
+            <input type="number" id="exponent" required>
+
+            <label for="finalRise">Final Rise in Tank (h2) in meters:</label>
+            <input type="number" id="finalRise" required>
+
+            <label for="initialRise">Initial Rise in Tank (h1) in meters:</label>
+            <input type="number" id="initialRise" required>
+
+            <label for="width">Width of the Water Tank (W) in meters:</label>
+            <input type="number" id="width" required>
+
+            <label for="length">Length of the Water Tank (L) in meters:</label>
+            <input type="number" id="length" required>
+
+            <label for="time">Time Taken (t) in seconds:</label>
+            <input type="number" id="time" required>
+
+            <button type="button" onclick="calculate()">Calculate</button>
+        </form>
+
+        <h2>Results:</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>Piezometer Tube No.</th>
+                    <th>Area of Cross-Section (m²)</th>
+                    <th>Velocity (m/s)</th>
+                    <th>Kinetic Head (m)</th>
+                    <th>Total Head (m)</th>
+                </tr>
+            </thead>
+            <tbody id="resultBody">
+                <!-- Results will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = 'index.html'; // Change this to your home page URL
+        }
+
+        function refreshForm() {
+            document.getElementById('experimentForm').reset(); // Reset the form fields
+            document.getElementById('resultBody').innerHTML = ''; // Clear the results
+            document.getElementById('areaInputs').innerHTML = ''; // Clear area inputs
+        }
+
+        function generateAreaInputs() {
+            const numAreas = parseInt(document.getElementById('numAreas').value);
+            const areaInputsDiv = document.getElementById('areaInputs');
+            areaInputsDiv.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 0; i < numAreas; i++) {
+                areaInputsDiv.innerHTML += `
+                    <input type="number" id="area${i + 1}" placeholder="Area of Cross-Section ${i + 1} (in m²)" required>
+                    <input type="number" id="potentialHead${i + 1}" placeholder="Potential Head at Area ${i + 1} in meters" required>
+                    <input type="number" id="pressureHead${i + 1}" placeholder="Pressure Head at Area ${i + 1} in meters" required>
+                    <br><br>
+                `;
+            }
+        }
+
+        function getValidInput(value, defaultValue, name) {
+            if (isNaN(value) || value <= 0) {
+                alert(`Invalid input for ${name}. Using default value: ${defaultValue}`);
+                return defaultValue;
+            }
+            return value;
+        }
+
+        function calculate() {
+            const areaInputs = document.getElementById('areaInputs').children;
+            const exponent = parseInt(document.getElementById('exponent').value);
+            const finalRise = parseFloat(document.getElementById('finalRise').value);
+            const initialRise = parseFloat(document.getElementById('initialRise').value);
+            const width = parseFloat(document.getElementById('width').value);
+            const length = parseFloat(document.getElementById('length').value);
+            const time = parseFloat(document.getElementById('time').value);
+            const g = 9.81; // Acceleration due to gravity in m/s²
+
+            // Calculate total rise and volume of discharged fluid (V)
+            const totalRise = finalRise - initialRise; // Total rise in meters
+            const volume = totalRise * width * length; // Volume = Rise * Width * Length
+
+            // Calculate actual discharge (Q)
+            const Q = volume / time; // Q = V / t
+            console.log(`Calculated Discharge (Q): ${Q}`); // Debug log for Q
+
+            // Clear previous results
+            const resultBody = document.getElementById('resultBody');
+            resultBody.innerHTML = '';
+
+            // Calculate for each area
+            const numAreas = Math.floor(areaInputs.length / 3); // Calculate the number of areas based on inputs
+            for (let i = 0; i < numAreas; i++) {
+                const area = getValidInput(parseFloat(document.getElementById(`area${i + 1}`).value) * Math.pow(10, exponent), 1e-6, `Area ${i + 1}`);
+                const potentialHead = getValidInput(parseFloat(document.getElementById(`potentialHead${i + 1}`).value), 1, `Potential Head ${i + 1}`);
+                const pressureHead = getValidInput(parseFloat(document.getElementById(`pressureHead${i + 1}`).value), 1, `Pressure Head ${i + 1}`);
+
+                // Log the values of area, potentialHead, and pressureHead
+                console.log(`Area ${i + 1}: ${area.toFixed(8)}, Potential Head: ${potentialHead}, Pressure Head: ${pressureHead}`); // Debug logs
+
+                // Calculate velocity (V) at this area
+                const velocity = Q / area; // V = Q / A
+                console.log(`Velocity at Area ${i + 1}: ${velocity}`); // Debug log for velocity
+
+                // Calculate kinetic head (Kinetic Head = V² / (2g))
+                const kineticHead = Math.pow(velocity, 2) / (2 * g);
+                console.log(`Kinetic Head at Area ${i + 1}: ${kineticHead}`); // Debug log for kinetic head
+
+                // Calculate total head
+                const totalHead = kineticHead + potentialHead + pressureHead;
+
+                // Create a new row for the results table
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${area.toFixed(8)}</td> <!-- Area formatted to 8 decimal places -->
+                    <td>${velocity.toFixed(5)}</td>
+                    <td>${kineticHead.toFixed(5)}</td>
+                    <td>${totalHead.toFixed(5)}</td>
+                `;
+                resultBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
